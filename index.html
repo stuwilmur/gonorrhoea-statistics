@@ -229,6 +229,8 @@ var yLabel;
 var chartLabel;
 var geojson;
 var squareside = 18;
+var theMax = 800;
+var calc_max = false;
 
 function optionsAndUpdate()
 {
@@ -241,11 +243,20 @@ function update(selectedGroup) {
 
 	// Create new data with the selection?  
 	var theData = men_data ;
-	var theMax =  800; //!!
 	
 	var dataFilter = theData.map(function(d){return {year: d.year, value:d[selectedGroup], gender : "men"} })
 	
 	var dataFilter_w = women_data.map(function(d){return {year: d.year, value:d[selectedGroup], gender : "women"} })
+	
+	var max_m = d3.max(dataFilter.map(function(d) {return +d.value;}));
+	var max_w = d3.max(dataFilter_w.map(function(d) {return +d.value;}));
+	var max = d3.max([max_w, max_m, 5]);
+	
+	if (calc_max) {
+		theMax = max;
+	}
+	
+	
 	  
 	// Y axis
 	var y = d3.scaleLinear()
@@ -331,7 +342,13 @@ d3.csv('Health_Boards_May_2016_Names_and_Codes_in_Scotland.csv', function(lookup
 				var dataFilter = theData.map(function(d){return {year: d.year, value:d[selectedRegion], gender : "men"} })
 				var dataFilter_w = women_data.map(function(d){return {year: d.year, value:d[selectedRegion], gender : "women"} })
 				
-				console.log(d3.extent(men_data));
+				var max_m = d3.max(dataFilter.map(function(d) {return +d.value;}));
+				var max_w = d3.max(dataFilter_w.map(function(d) {return +d.value;}));
+				var max = d3.max([max_w, max_m, 5]);
+	
+				if (calc_max) {
+					theMax = max;
+				}
 
 				// List of groups (here I have one group per column)
 				var allGroup = men_data.columns.slice(1)
